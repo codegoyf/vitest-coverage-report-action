@@ -85,7 +85,7 @@ const run = async () => {
 	const commitSHAUrl = generateCommitSHAUrl(options.commitSHA);
 
 	summary.addRaw(
-		`<em>Generated in workflow <a href=${getWorkflowSummaryURL()}>#${github.context.runNumber}</a> for commit <a href="${commitSHAUrl}">${options.commitSHA.substring(0, 7)}</a> by the <a href="https://github.com/davelosert/vitest-coverage-report-action">Vitest Coverage Report Action</a></em>`,
+		`<em>Generated in workflow <a href=${getWorkflowSummaryURL()}>#${github.context.runNumber}</a> for commit <a href="${commitSHAUrl}">${options.commitSHA.substring(0, 7)}</a> by the <a href="https://github.com/codegoyf/vitest-coverage-report-action">Vitest Coverage Report Action</a></em>`,
 	);
 
 	if (options.commentOn.includes("pr")) {

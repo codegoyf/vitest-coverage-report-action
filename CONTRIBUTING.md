@@ -57,8 +57,8 @@ Here are a few things you can do that will increase the likelihood of your pull 
 - [Using Pull Requests](https://help.github.com/articles/about-pull-requests/)
 - [GitHub Help](https://help.github.com)
 
-[fork]: https://github.com/davelosert/vitest-coverage-report-action/fork
-[pr]: https://github.com/davelosert/vitest-coverage-report-action/compare
-[issues]: https://github.com/davelosert/vitest-coverage-report-action/issues
-[create-issue]: https://github.com/davelosert/vitest-coverage-report-action/issues/new
+[fork]: https://github.com/codegoyf/vitest-coverage-report-action/fork
+[pr]: https://github.com/codegoyf/vitest-coverage-report-action/compare
+[issues]: https://github.com/codegoyf/vitest-coverage-report-action/issues
+[create-issue]: https://github.com/codegoyf/vitest-coverage-report-action/issues/new
 [biome]: https://biomejs.dev/

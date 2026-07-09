@@ -24,7 +24,7 @@
     "coverage",
     "nyc"
   ],
-  "author": "David Losert <david@david-losert.com>",
+  "author": "Michael McDonald",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/codegoyf/vitest-coverage-report-action/issues"

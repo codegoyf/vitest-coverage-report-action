@@ -1,6 +1,6 @@
 name: 'Vitest Coverage Report'
 description: 'Provide a Vitest Test Coverage Report as Step-Summary and comment in Pull Requests'
-author: 'David Losert'
+author: 'Michael McDonald'
 inputs:
   github-token:
       required: false

@@ -8,6 +8,9 @@ The action generates a high-level coverage summary for all coverage categories, 
 
 Want to contribute? Check out the [Contributing Guidelines](./CONTRIBUTING.md).
 
+> [!NOTE]
+> This is a fork of [davelosert/vitest-coverage-report-action](https://github.com/davelosert/vitest-coverage-report-action), originally created by [David Losert](https://github.com/davelosert). All credit for the original design and implementation goes to the upstream project; this fork exists to carry a couple of local patches while they work through review upstream.
+
 ## Usage
 
 To use this action, you need to configure `vitest` to create a coverage report with the following reporters:
@@ -65,7 +68,7 @@ jobs:
       # Set if: always() to also generate the report if tests are failing
       # Only works if you set `reportOnFailure: true` in your vite config as specified above
       if: always() 
-      uses:  davelosert/vitest-coverage-report-action@v2
+      uses:  codegoyf/vitest-coverage-report-action@v2
 ```
 
 > [!NOTE]
@@ -126,14 +129,14 @@ If your project includes multiple test suites and you want to consolidate their 
 ## ...
     - name: 'Report Frontend Coverage'
       if: always() # Also generate the report if tests are failing
-      uses:  davelosert/vitest-coverage-report-action@v2
+      uses:  codegoyf/vitest-coverage-report-action@v2
       with:
         name: 'Frontend'
         json-summary-path: './coverage/coverage-summary-frontend.json'
         json-final-path: './coverage/coverage-final-frontend.json
     - name: 'Report Backend Coverage'
       if: always() # Also generate the report if tests are failing
-      uses:  davelosert/vitest-coverage-report-action@v2
+      uses:  codegoyf/vitest-coverage-report-action@v2
       with:
         name: 'Backend'
         json-summary-path: './coverage/coverage-summary-backend.json'
@@ -151,7 +154,7 @@ The format is a JSON object where keys are coverage percentage thresholds and va
 ```yml
 ## ...
     - name: 'Report Coverage'
-      uses:  davelosert/vitest-coverage-report-action@v2
+      uses:  codegoyf/vitest-coverage-report-action@v2
       with:
         threshold-icons: "{0: '🔴', 80: '🟠', 90: '🟢'}"
 ```
@@ -261,7 +264,7 @@ jobs:
           name: coverage-main
           path: coverage-main
       - name: "Report Coverage"
-        uses: davelosert/vitest-coverage-report-action@v2
+        uses: codegoyf/vitest-coverage-report-action@v2
         with:
           json-summary-compare-path: coverage-main/coverage-summary.json
 ```
@@ -373,7 +376,7 @@ It will then automatically locate the appropriate pull request to comment on.
               github-token: ${{ secrets.GITHUB_TOKEN }}
               run-id: ${{ github.event.workflow_run.id }}
           - name: "Report Coverage"
-            uses: davelosert/vitest-coverage-report-action@v2
+            uses: codegoyf/vitest-coverage-report-action@v2
     ```
 
 > [!NOTE]
