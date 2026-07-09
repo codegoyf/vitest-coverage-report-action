@@ -1,5 +1,5 @@
 import { oneLine } from "common-tags";
-import { defaultThresholdIcons, icons } from "../icons";
+import { icons } from "../icons";
 import type { CoverageReport, ReportNumbers } from "../types/JsonSummary";
 import type { Thresholds } from "../types/Threshold";
 import type { ThresholdIcons } from "../types/ThresholdIcons";
@@ -9,7 +9,7 @@ function generateSummaryTableHtml(
 	jsonReport: CoverageReport,
 	thresholds: Thresholds = {},
 	jsonCompareReport: CoverageReport | undefined = undefined,
-	thresholdIcons: ThresholdIcons = defaultThresholdIcons,
+	thresholdIcons?: ThresholdIcons,
 	comparisonDecimalPlaces = 2,
 ): string {
 	return oneLine`
@@ -62,6 +62,29 @@ function getStatusFromThresholdIcons(
 	return icons.blue;
 }
 
+/**
+ * Determines the status icon for a single row.
+ * - Explicit thresholdIcons (from the threshold-icons input) always wins.
+ * - Otherwise, if a vitest coverage threshold is defined for this category,
+ *   color by pass/fail against it.
+ * - Otherwise, fall back to blue (no threshold configured at all).
+ */
+function getStatus(
+	pct: number,
+	threshold: number | undefined,
+	thresholdIcons: ThresholdIcons | undefined,
+): string {
+	if (thresholdIcons) {
+		return getStatusFromThresholdIcons(pct, thresholdIcons);
+	}
+
+	if (threshold !== undefined) {
+		return pct >= threshold ? icons.green : icons.red;
+	}
+
+	return icons.blue;
+}
+
 function generateTableRow({
 	reportNumbers,
 	category,
@@ -74,7 +97,7 @@ function generateTableRow({
 	category: string;
 	threshold?: number;
 	reportCompareNumbers?: ReportNumbers;
-	thresholdIcons: ThresholdIcons;
+	thresholdIcons?: ThresholdIcons;
 	comparisonDecimalPlaces?: number;
 }): string {
 	let percent = `${reportNumbers.pct}%`;
@@ -84,8 +107,7 @@ function generateTableRow({
 		percent = `${percent} (${icons.target} ${threshold}%)`;
 	}
 
-	// Always use thresholdIcons for status icon
-	const status = getStatusFromThresholdIcons(reportNumbers.pct, thresholdIcons);
+	const status = getStatus(reportNumbers.pct, threshold, thresholdIcons);
 
 	if (reportCompareNumbers) {
 		const percentDiff = reportNumbers.pct - reportCompareNumbers.pct;

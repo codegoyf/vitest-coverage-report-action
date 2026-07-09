@@ -81,7 +81,7 @@ describe("generateSummaryTabelHtml()", () => {
 		expect(getTableLine(1, summaryHtml)).toContain("8 / 10");
 	});
 
-	it("shows blue-circle when vitest threshold is defined but no custom thresholdIcons provided.", async (): Promise<void> => {
+	it("shows blue-circle when vitest threshold is defined but thresholdIcons is explicitly passed as the blue default.", async (): Promise<void> => {
 		const thresholds: Thresholds = { lines: 80 };
 		const mockReport = createMockCoverageReport({
 			lines: createMockReportNumbers({
@@ -95,8 +95,32 @@ describe("generateSummaryTabelHtml()", () => {
 			defaultThresholdIcons,
 		);
 
-		// With normalized behavior, default thresholdIcons (blue) is always used unless custom icons provided
+		// Explicit thresholdIcons always wins over the vitest threshold pass/fail check.
 		expect(getTableLine(1, summaryHtml)).toContain(icons.blue);
+	});
+
+	it("shows green icon when coverage meets the vitest threshold and no thresholdIcons is provided.", async (): Promise<void> => {
+		const thresholds: Thresholds = { lines: 80 };
+		const mockReport = createMockCoverageReport({
+			lines: createMockReportNumbers({
+				pct: 81,
+			}),
+		});
+		const summaryHtml = generateSummaryTableHtml(mockReport, thresholds);
+
+		expect(getTableLine(1, summaryHtml)).toContain(icons.green);
+	});
+
+	it("shows red icon when coverage is below the vitest threshold and no thresholdIcons is provided.", async (): Promise<void> => {
+		const thresholds: Thresholds = { lines: 80 };
+		const mockReport = createMockCoverageReport({
+			lines: createMockReportNumbers({
+				pct: 79,
+			}),
+		});
+		const summaryHtml = generateSummaryTableHtml(mockReport, thresholds);
+
+		expect(getTableLine(1, summaryHtml)).toContain(icons.red);
 	});
 
 	it("if threshold is given, provides the threshold in the category column.", async (): Promise<void> => {
