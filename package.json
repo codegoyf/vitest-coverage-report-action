@@ -17,7 +17,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/davelosert/vitest-coverage-report-action.git"
+    "url": "git+https://github.com/codegoyf/vitest-coverage-report-action.git"
   },
   "keywords": [
     "vitest",
@@ -27,9 +27,9 @@
   "author": "David Losert <david@david-losert.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/davelosert/vitest-coverage-report-action/issues"
+    "url": "https://github.com/codegoyf/vitest-coverage-report-action/issues"
   },
-  "homepage": "https://github.com/davelosert/vitest-coverage-report-action#readme",
+  "homepage": "https://github.com/codegoyf/vitest-coverage-report-action#readme",
   "dependencies": {
     "@actions/core": "3.0.1",
     "@actions/github": "9.1.1",
