@@ -2,7 +2,7 @@ import * as path from "node:path";
 import * as core from "@actions/core";
 import type { Octokit } from "../octokit";
 import type { Thresholds } from "../types/Threshold";
-import type { ThresholdIcons } from "../types/ThresholdIcons";
+import type { ThresholdIconsByCategory } from "../types/ThresholdIcons";
 import { type FileCoverageMode, getCoverageModeFrom } from "./FileCoverageMode";
 import { type CommentOn, getCommentOn } from "./getCommentOn";
 import { getCommitSHA } from "./getCommitSHA";
@@ -10,6 +10,7 @@ import { getPullRequestNumber } from "./getPullRequestNumber";
 import { getViteConfigPath } from "./getViteConfigPath";
 import { parseCoverageThresholds } from "./parseCoverageThresholds";
 import { parseThresholdIcons } from "./parseThresholdIcons";
+import { resolveThresholdIcons } from "./resolveThresholdIcons";
 import { getSortByFrom, type SortBy } from "./sortBy";
 
 type Options = {
@@ -22,7 +23,7 @@ type Options = {
 	jsonSummaryComparePath: string | null;
 	name: string;
 	thresholds: Thresholds;
-	thresholdIcons: ThresholdIcons | undefined;
+	thresholdIcons: ThresholdIconsByCategory;
 	workingDirectory: string;
 	prNumber: number | undefined;
 	commitSHA: string;
@@ -114,21 +115,18 @@ async function readOptions(octokit: Octokit): Promise<Options> {
 		core.getInput("threshold-icons"),
 	);
 
-	// Normalize threshold icons:
-	// - If the user explicitly provided valid threshold-icons, use them (and
-	//   warn if vitest coverage thresholds are also defined, since the two
-	//   may disagree on pass/fail boundaries).
-	// - Otherwise leave it undefined, so the report falls back to coloring
-	//   each row by pass/fail against that category's vitest threshold (if
-	//   any is defined), rather than forcing every row to blue.
-	const thresholdIcons = parsedThresholdIcons;
-	if (thresholdIcons && hasThresholds(thresholds)) {
+	if (parsedThresholdIcons && hasThresholds(thresholds)) {
 		core.warning(
 			"Both coverage thresholds and threshold-icons are defined. " +
 				"The threshold-icons will be used for status display, but they may not reflect " +
 				"the actual pass/fail status from the coverage thresholds.",
 		);
 	}
+
+	const thresholdIcons = resolveThresholdIcons(
+		thresholds,
+		parsedThresholdIcons,
+	);
 
 	const commitSHA = getCommitSHA();
 

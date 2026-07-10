@@ -1,15 +1,25 @@
 import { oneLine } from "common-tags";
-import { icons } from "../icons";
+import { defaultThresholdIcons, icons } from "../icons";
 import type { CoverageReport, ReportNumbers } from "../types/JsonSummary";
 import type { Thresholds } from "../types/Threshold";
-import type { ThresholdIcons } from "../types/ThresholdIcons";
+import type {
+	ThresholdIcons,
+	ThresholdIconsByCategory,
+} from "../types/ThresholdIcons";
 import { getCompareString } from "./getCompareString";
+
+const allBlueThresholdIcons: ThresholdIconsByCategory = {
+	lines: defaultThresholdIcons,
+	statements: defaultThresholdIcons,
+	functions: defaultThresholdIcons,
+	branches: defaultThresholdIcons,
+};
 
 function generateSummaryTableHtml(
 	jsonReport: CoverageReport,
 	thresholds: Thresholds = {},
 	jsonCompareReport: CoverageReport | undefined = undefined,
-	thresholdIcons?: ThresholdIcons,
+	thresholdIcons: ThresholdIconsByCategory = allBlueThresholdIcons,
 	comparisonDecimalPlaces = 2,
 ): string {
 	return oneLine`
@@ -24,16 +34,16 @@ function generateSummaryTableHtml(
 			</thead>
 			<tbody>
 				<tr>
-					${generateTableRow({ reportNumbers: jsonReport.lines, category: "Lines", threshold: thresholds.lines, reportCompareNumbers: jsonCompareReport?.lines, thresholdIcons, comparisonDecimalPlaces })}
+					${generateTableRow({ reportNumbers: jsonReport.lines, category: "Lines", threshold: thresholds.lines, reportCompareNumbers: jsonCompareReport?.lines, thresholdIcons: thresholdIcons.lines, comparisonDecimalPlaces })}
 				</tr>
 				<tr>
-					${generateTableRow({ reportNumbers: jsonReport.statements, category: "Statements", threshold: thresholds.statements, reportCompareNumbers: jsonCompareReport?.statements, thresholdIcons, comparisonDecimalPlaces })}
+					${generateTableRow({ reportNumbers: jsonReport.statements, category: "Statements", threshold: thresholds.statements, reportCompareNumbers: jsonCompareReport?.statements, thresholdIcons: thresholdIcons.statements, comparisonDecimalPlaces })}
 				</tr>
 				<tr>
-					${generateTableRow({ reportNumbers: jsonReport.functions, category: "Functions", threshold: thresholds.functions, reportCompareNumbers: jsonCompareReport?.functions, thresholdIcons, comparisonDecimalPlaces })}
+					${generateTableRow({ reportNumbers: jsonReport.functions, category: "Functions", threshold: thresholds.functions, reportCompareNumbers: jsonCompareReport?.functions, thresholdIcons: thresholdIcons.functions, comparisonDecimalPlaces })}
 				</tr>
 				<tr>
-					${generateTableRow({ reportNumbers: jsonReport.branches, category: "Branches", threshold: thresholds.branches, reportCompareNumbers: jsonCompareReport?.branches, thresholdIcons, comparisonDecimalPlaces })}
+					${generateTableRow({ reportNumbers: jsonReport.branches, category: "Branches", threshold: thresholds.branches, reportCompareNumbers: jsonCompareReport?.branches, thresholdIcons: thresholdIcons.branches, comparisonDecimalPlaces })}
 				</tr>
 			</tbody>
 		</table>
@@ -62,29 +72,6 @@ function getStatusFromThresholdIcons(
 	return icons.blue;
 }
 
-/**
- * Determines the status icon for a single row.
- * - Explicit thresholdIcons (from the threshold-icons input) always wins.
- * - Otherwise, if a vitest coverage threshold is defined for this category,
- *   color by pass/fail against it.
- * - Otherwise, fall back to blue (no threshold configured at all).
- */
-function getStatus(
-	pct: number,
-	threshold: number | undefined,
-	thresholdIcons: ThresholdIcons | undefined,
-): string {
-	if (thresholdIcons) {
-		return getStatusFromThresholdIcons(pct, thresholdIcons);
-	}
-
-	if (threshold !== undefined) {
-		return pct >= threshold ? icons.green : icons.red;
-	}
-
-	return icons.blue;
-}
-
 function generateTableRow({
 	reportNumbers,
 	category,
@@ -97,7 +84,7 @@ function generateTableRow({
 	category: string;
 	threshold?: number;
 	reportCompareNumbers?: ReportNumbers;
-	thresholdIcons?: ThresholdIcons;
+	thresholdIcons: ThresholdIcons;
 	comparisonDecimalPlaces?: number;
 }): string {
 	let percent = `${reportNumbers.pct}%`;
@@ -107,7 +94,7 @@ function generateTableRow({
 		percent = `${percent} (${icons.target} ${threshold}%)`;
 	}
 
-	const status = getStatus(reportNumbers.pct, threshold, thresholdIcons);
+	const status = getStatusFromThresholdIcons(reportNumbers.pct, thresholdIcons);
 
 	if (reportCompareNumbers) {
 		const percentDiff = reportNumbers.pct - reportCompareNumbers.pct;
